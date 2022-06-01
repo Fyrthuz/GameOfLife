@@ -47,48 +47,67 @@ def vecinos(i,j,matriz):
     return count
     
 
-
+pygame.init()
 # In[ ]:
 
-
+play = True
 screen = pygame.display.set_mode((width, height))
 screen.fill((0, 0, 0))
 while True:
-    pygame.event.pump()
-    count = 0
+
+    
+    for event in pygame.event.get():
+        #when the user clicks the close button
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            break
+        #iF THE SPCAE BAR IS PRESSED
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                if play:
+                    play = False
+                else:
+                    play = True
+        if not play:
+            click = pygame.mouse.get_pressed()
+            if sum(click) > 0:
+                pos = pygame.mouse.get_pos()
+                i = pos[0] // heightPerRow
+                j = pos[1] // widthPerCol
+                i = int(i)
+                j = int(j)
+                if matrix.item((i,j)) == 1:
+                    matrix[i][j] = 0
+                else:
+                    matrix[i][j] = 1
+                #time.sleep(0.1)
+
+
     for i in range(nRows):
         for j in range(nCols):
             if matrix.item((i,j))==1:
                 pygame.draw.rect(screen, liveCellColor, pygame.Rect(heightPerRow*i, widthPerCol*j, heightPerRow*(i+1), widthPerCol*(j+1)))
-                count=1
             else:
                 pygame.draw.rect(screen, deadCellColor, pygame.Rect(heightPerRow*i, widthPerCol*j, heightPerRow*(i+1), widthPerCol*(j+1)),  0)
     for i in range(nRows):
         for j in range(nCols):
             pygame.draw.rect(screen, liveCellColor, pygame.Rect(heightPerRow*i, widthPerCol*j, heightPerRow*(i+1), widthPerCol*(j+1)),1)
+
     pygame.display.flip()
-    newBoard = matrix.copy()
-    for i in range(nRows):
-        for j in range(nCols):
-            if (vecinos(i,j,newBoard)<2 or vecinos(i,j,newBoard)>3) and newBoard.item((i,j))==1:
-                matrix[i][j]=0
-            if (vecinos(i,j,newBoard)==3) and newBoard.item((i,j))==0:
-                matrix[i][j]=1
-    if count==0:
-        break
+    if play:
+        newBoard = matrix.copy()
+        for i in range(nRows):
+            for j in range(nCols):
+                if (vecinos(i,j,newBoard)<2 or vecinos(i,j,newBoard)>3) and newBoard.item((i,j))==1:
+                    matrix[i][j]=0
+                if (vecinos(i,j,newBoard)==3) and newBoard.item((i,j))==0:
+                    matrix[i][j]=1
     time.sleep(0.05)
+    #Empty the queue of events
+    pygame.event.pump()
+        
 time.sleep(1)
 pygame.quit()
-
-
-# In[3]:
-
-
-vecinos(1,1,matrix)
-
-
-# In[ ]:
-
 
 
 
